@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Medipro ile 2026 yılına 🎉​</title>
+
+  <style>
+    :root{
+      --science-blue:#0b5ed8;
+      --text:#f5fbff;
+      --glass:rgba(255,255,255,.10);
+      --glass2:rgba(255,255,255,.06);
+      --shadow:rgba(0,0,0,.35);
+      --neon1: rgba(120, 220, 255, .85);
+      --neon2: rgba(160, 120, 255, .35);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 800px at 30% 20%, rgba(255,255,255,.12), transparent 55%),
+                  radial-gradient(900px 700px at 70% 80%, rgba(0,0,0,.15), transparent 60%),
+                  var(--science-blue);
+      color:var(--text);
+      overflow:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background: radial-gradient(1200px 900px at 50% 30%, transparent 35%, rgba(0,0,0,.25) 75%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    /* Snow canvas */
+    #snow{
+      position:fixed; inset:0;
+      z-index:1;
+      pointer-events:none;
+    }
+
+    /* Main card container */
+    .wrap{
+      position:relative;
+      z-index:2;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    .card{
+      width:min(720px, 92vw);
+      height:min(820px, 86vh);
+      border-radius:28px;
+      background: linear-gradient(180deg, var(--glass), var(--glass2));
+      box-shadow: 0 18px 45px var(--shadow);
+      border:1px solid rgba(255,255,255,.16);
+      overflow:hidden;
+      position:relative;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* Slide area */
+    .viewport{
+      position:absolute; inset:0;
+      padding:28px 22px 92px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .slides{
+      width:100%;
+      height:100%;
+      display:flex;
+      transition: transform 2200ms cubic-bezier(.16,.92,.18,1);
+      will-change:transform;
+    }
+
+    .slide{
+      width:100%;
+      height:100%;
+      flex:0 0 100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 8px 10px;
+    }
+
+    .panel{
+      width:100%;
+      max-width:620px;
+      padding: 18px 16px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.10);
+    }
+
+    /* Neon-ish text */
+    .neon{
+      text-shadow:
+        0 0 6px rgba(255,255,255,.35),
+        0 0 12px var(--neon1),
+        0 0 24px var(--neon2);
+    }
+
+    .title{
+      font-size: clamp(22px, 3.4vw, 34px);
+      letter-spacing:.2px;
+      margin:0 0 10px 0;
+      font-weight:800;
+      text-align:center;
+    }
+
+    .subtitle{
+      margin:0 0 16px 0;
+      opacity:.92;
+      font-size: clamp(14px, 2.2vw, 16px);
+      text-align:center;
+    }
+
+    .p{
+      margin: 0 0 12px 0;
+      line-height:1.62;
+      font-size: clamp(16px, 2.5vw, 18px);
+      opacity:.98;
+      text-align:center;
+    }
+
+    .bullets{
+      list-style:none;
+      padding:0; margin:10px 0 0 0;
+      display:grid;
+      gap:10px;
+    }
+    .bullets li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      text-align:left;
+    }
+    .dot{
+      width:10px; height:10px;
+      border-radius:99px;
+      background: rgba(255,255,255,.85);
+      box-shadow: 0 0 10px rgba(255,255,255,.45), 0 0 18px var(--neon1);
+      margin-top:6px;
+      flex:0 0 10px;
+    }
+
+    /* Reveal animation: slower and softer */
+    .reveal{
+      --stagger: 1500ms;
+    }
+    .reveal .line{
+      opacity:0;
+      transform: translateY(-16px);
+      filter: blur(1.6px);
+      animation: lineIn 2200ms cubic-bezier(.16,.92,.18,1) forwards;
+      animation-delay: calc(var(--i) * var(--stagger));
+      will-change: transform, opacity, filter;
+    }
+    @keyframes lineIn{
+      to { opacity:1; transform: translateY(0); filter: blur(0); }
+    }
+
+    /* Next button: hidden 2s, then appears slower */
+    .nav{
+      position:absolute;
+      left:0; right:0; bottom:0;
+      padding: 16px 18px 18px 18px;
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+      z-index:4;
+    }
+
+    .btn{
+      pointer-events:auto;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      border-radius:999px;
+      padding: 12px 18px;
+      font-weight:700;
+      letter-spacing:.2px;
+      cursor:pointer;
+      transform: translateY(14px);
+      opacity:0;
+      transition: opacity 1100ms ease, transform 1100ms ease, background 200ms ease;
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .btn:hover{ background: rgba(0,0,0,.26); }
+    .btn:active{ transform: translateY(16px) scale(.99); }
+
+    .btn.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    .hint{
+      position:absolute;
+      top:14px; left:18px; right:18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      opacity:.78;
+      font-size:13px;
+      z-index:3;
+      pointer-events:none;
+    }
+
+    .progress{
+      display:flex; gap:6px;
+      align-items:center;
+    }
+    .bar{
+      width:10px; height:10px;
+      border-radius:99px;
+      background: rgba(255,255,255,.28);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .bar.on{
+      background: rgba(255,255,255,.85);
+      box-shadow: 0 0 12px rgba(255,255,255,.35), 0 0 20px var(--neon1);
+    }
+
+    /* Bottom-right animated tree */
+    .tree{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      width:160px;
+      height:210px;
+      z-index:3;
+      pointer-events:none;
+      opacity:.95;
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
+    }
+
+    .tree .tri{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      width:0; height:0;
+      border-left:70px solid transparent;
+      border-right:70px solid transparent;
+      border-bottom:95px solid rgba(16, 196, 120, .92);
+      border-radius:10px;
+    }
+    .tree .tri.t2{
+      top:48px;
+      border-left-width:60px; border-right-width:60px; border-bottom-width:85px;
+      border-bottom-color: rgba(10, 165, 102, .95);
+    }
+    .tree .tri.t3{
+      top:92px;
+      border-left-width:50px; border-right-width:50px; border-bottom-width:75px;
+      border-bottom-color: rgba(7, 135, 86, .95);
+    }
+
+    .tree .trunk{
+      position:absolute;
+      left:50%;
+      bottom:0;
+      transform:translateX(-50%);
+      width:32px; height:44px;
+      border-radius:8px;
+      background: rgba(120, 70, 30, .95);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .tree .star{
+      position:absolute;
+      left:50%;
+      top:2px;
+      transform: translateX(-50%);
+      width:14px; height:14px;
+      background: rgba(255,255,255,.92);
+      clip-path: polygon(50% 0%, 61% 34%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 34%);
+      box-shadow: 0 0 14px rgba(255,255,255,.65), 0 0 26px var(--neon1);
+      animation: starPulse 1.9s ease-in-out infinite;
+    }
+    @keyframes starPulse{
+      0%,100%{ transform:translateX(-50%) scale(1); opacity:.92; }
+      50%{ transform:translateX(-50%) scale(1.12); opacity:1; }
+    }
+
+    .light{
+      position:absolute;
+      width:9px; height:9px;
+      border-radius:99px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 0 12px rgba(255,255,255,.55);
+      opacity:.98;
+      animation: twinkle 1.35s ease-in-out infinite;
+      will-change: transform, filter;
+    }
+    @keyframes twinkle{
+      0%,100%{ transform:scale(.92); }
+      50%{ transform:scale(1.18); }
+    }
+
+    /* ----------------------------------
+       FULLSCREEN VIDEO OVERLAY (AFTER CARDS)
+       + SOFT TRANSITION (like slide)
+       ---------------------------------- */
+    #videoOverlay{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background:#000;
+      opacity:0;
+      visibility:hidden;
+      transform: translateX(40px);
+      transition: opacity 2200ms cubic-bezier(.16,.92,.18,1),
+                  transform 2200ms cubic-bezier(.16,.92,.18,1),
+                  visibility 0s linear 2200ms;
+    }
+    #videoOverlay.show{
+      opacity:1;
+      visibility:visible;
+      transform: translateX(0);
+      transition: opacity 2200ms cubic-bezier(.16,.92,.18,1),
+                  transform 2200ms cubic-bezier(.16,.92,.18,1),
+                  visibility 0s;
+    }
+    #videoOverlay video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit: cover;
+      background:#000;
+    }
+
+    /* Fade out the card layer with same "soft" timing */
+    .wrap{
+      transition: opacity 2200ms cubic-bezier(.16,.92,.18,1),
+                  transform 2200ms cubic-bezier(.16,.92,.18,1);
+    }
+    body.video-mode .wrap{
+      opacity:0;
+      transform: translateX(-40px);
+      pointer-events:none;
+    }
+
+    /* Keep snow hidden on video (clean), but fade with same timing */
+    #snow{
+      transition: opacity 2200ms cubic-bezier(.16,.92,.18,1);
+    }
+    body.video-mode #snow{
+      opacity:0;
+    }
+
+    /* Optional: hide scrollbars / lock */
+    body.video-mode{
+      overflow:hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .slides{ transition:none; }
+      .reveal .line{ animation:none; opacity:1; transform:none; filter:none; }
+      .btn{ transition:none; opacity:1; transform:none; }
+      .tree .star{ animation:none; }
+      .light{ animation:none; }
+      #videoOverlay, .wrap, #snow{ transition:none; }
+      #videoOverlay{ opacity:1; visibility:visible; transform:none; }
+      body.video-mode .wrap{ display:none; }
+      body.video-mode #snow{ display:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="snow"></canvas>
+
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="hint">
+        <div class="neon" id="slideLabel">Medipro ile 2026</div>
+        <div class="progress" id="progress"></div>
+      </div>
+
+      <div class="tree" aria-hidden="true" id="tree">
+        <div class="star"></div>
+        <div class="tri t1" style="top:18px;"></div>
+        <div class="tri t2"></div>
+        <div class="tri t3"></div>
+        <div class="trunk"></div>
+
+        <div class="light" style="left:66px; top:55px;"></div>
+        <div class="light" style="left:92px; top:72px;"></div>
+        <div class="light" style="left:48px; top:80px;"></div>
+        <div class="light" style="left:78px; top:105px;"></div>
+        <div class="light" style="left:58px; top:128px;"></div>
+        <div class="light" style="left:96px; top:122px;"></div>
+        <div class="light" style="left:70px; top:145px;"></div>
+      </div>
+
+      <div class="viewport">
+        <div class="slides" id="slides">
+          <!-- Slide 1 -->
+          <section class="slide">
+            <div class="panel reveal neon">
+              <h1 class="title line" style="--i:0">Yeni Yıla Birlikte 🎄</h1>
+              <p class="subtitle line" style="--i:1">Medipro Ailesi için küçük bir yeni yıl mesajı</p>
+            </div>
+          </section>
+
+          <!-- Slide 2 -->
+          <section class="slide">
+            <div class="panel reveal neon">
+              <h2 class="title line" style="--i:0">Merhaba Medipro Ailesi,</h2>
+              <p class="p line" style="--i:1">Bir yılı daha geride bırakırken aynı hedef için, aynı çatı altında, birlikte emek veren güzel bir ekibiz.</p>
+              <p class="p line" style="--i:2">İyi ki varsınız.</p>
+            </div>
+          </section>
+
+          <!-- Slide 3 -->
+          <section class="slide">
+            <div class="panel reveal neon">
+              <h2 class="title line" style="--i:0">Birlikte Emek Verdik</h2>
+              <p class="p line" style="--i:1">2025 boyunca yoğun günler oldu, koşturmalar oldu, bazen yorulduk… ama hep birlikte ilerledik.</p>
+              <p class="p line" style="--i:2">Her katkı, her destek, her çaba için teşekkür ederiz.</p>
+            </div>
+          </section>
+
+          <!-- Slide 4 -->
+          <section class="slide">
+            <div class="panel reveal neon">
+              <h2 class="title line" style="--i:0">Bizi Biz Yapan</h2>
+              <ul class="bullets">
+                <li class="line" style="--i:1"><span class="dot"></span><span>Birbirine güvenen bir ekip</span></li>
+                <li class="line" style="--i:2"><span class="dot"></span><span>Sorumluluk alan insanlar</span></li>
+                <li class="line" style="--i:3"><span class="dot"></span><span>Dayanışma ve samimiyet</span></li>
+                <li class="line" style="--i:4"><span class="dot"></span><span>İşini sahiplenen bir kültür</span></li>
+              </ul>
+              <p class="p line" style="--i:5; margin-top:14px;">Medipro’yu Medipro yapan da tam olarak bu.</p>
+            </div>
+          </section>
+
+          <!-- Slide 5 (LAST CARD) -->
+          <section class="slide">
+            <div class="panel reveal neon">
+              <h2 class="title line" style="--i:0">Yeni Yılda</h2>
+              <p class="p line" style="--i:1">Daha sağlıklı, daha huzurlu, daha keyifli ve birlikte gurur duyacağımız başarılarla dolu bir yıl olsun.</p>
+              <p class="p line" style="--i:2">2026’da da aynı ekip ruhuyla yan yana olalım.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn neon" id="nextBtn">Sonraki sayfa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN VIDEO (shown after cards finish) -->
+  <div id="videoOverlay" aria-hidden="true">
+    <video id="finalVideo" src="newyear.mp4" autoplay muted loop playsinline></video>
+  </div>
+
+  <script>
+    // ---------------------------
+    // Slides logic + button timing
+    // ---------------------------
+    const slidesEl = document.getElementById('slides');
+    const nextBtn  = document.getElementById('nextBtn');
+    const slideLabel = document.getElementById('slideLabel');
+    const progressEl = document.getElementById('progress');
+
+    const overlay = document.getElementById('videoOverlay');
+    const finalVideo = document.getElementById('finalVideo');
+
+    const total = slidesEl.children.length;
+    let index = 0;
+    let btnTimer = null;
+
+    // Build progress dots
+    for (let i=0; i<total; i++){
+      const d = document.createElement('div');
+      d.className = 'bar' + (i===0 ? ' on' : '');
+      progressEl.appendChild(d);
+    }
+
+    function setProgress(i){
+      [...progressEl.children].forEach((n, idx) => {
+        n.classList.toggle('on', idx === i);
+      });
+    }
+
+    function restartRevealForSlide(i){
+      const slide = slidesEl.children[i];
+      const panel = slide.querySelector('.panel');
+      if (!panel) return;
+
+      if (panel.classList.contains('reveal')){
+        panel.classList.remove('reveal');
+        void panel.offsetWidth;
+        panel.classList.add('reveal');
+      }
+    }
+
+    function showFinalVideo(){
+      // Start the overlay transition first, then play (best-effort)
+      overlay.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('show');
+      document.body.classList.add('video-mode');
+
+      // Try to play ASAP (muted + playsinline should be ok on mobile)
+      finalVideo.play().catch(()=>{});
+    }
+
+    function updateUI(){
+      slidesEl.style.transform = `translateX(${-index * 100}%)`;
+      setProgress(index);
+      slideLabel.textContent = 'Medipro ile 2026 yılına 🎉';
+
+      clearTimeout(btnTimer);
+      nextBtn.classList.remove('show');
+      document.querySelector('.nav').style.pointerEvents = 'none';
+
+      const isLastCard = (index === total - 1);
+      if (!isLastCard){
+        btnTimer = setTimeout(() => {
+          nextBtn.textContent = 'Sonraki sayfa';
+          nextBtn.classList.add('show');
+          document.querySelector('.nav').style.pointerEvents = 'auto';
+        }, 2000);
+      } else {
+        btnTimer = setTimeout(() => {
+          nextBtn.textContent = '🎄​';
+          nextBtn.classList.add('show');
+          document.querySelector('.nav').style.pointerEvents = 'auto';
+        }, 2000);
+      }
+
+      restartRevealForSlide(index);
+    }
+
+    nextBtn.addEventListener('click', () => {
+      const isLastCard = (index === total - 1);
+      if (!isLastCard){
+        index++;
+        updateUI();
+      } else {
+        showFinalVideo();
+      }
+    });
+
+    // Swipe support (cards only; on last card swiping left triggers video)
+    let startX = null;
+    const card = document.getElementById('card');
+    card.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, {passive:true});
+    card.addEventListener('touchend', (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      startX = null;
+      if (Math.abs(dx) < 60) return;
+
+      const isLastCard = (index === total - 1);
+
+      if (dx < 0){
+        if (!isLastCard){ index++; updateUI(); }
+        else { showFinalVideo(); }
+      }
+      if (dx > 0 && index > 0){
+        index--;
+        updateUI();
+      }
+    }, {passive:true});
+
+    updateUI();
+
+    // ---------------------------
+    // Tree lights: random colors
+    // ---------------------------
+    const lights = [...document.querySelectorAll('#tree .light')];
+    function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function randomNeonColor(){
+      const h = randInt(0, 360);
+      const s = randInt(80, 100);
+      const l = randInt(55, 70);
+      return `hsl(${h} ${s}% ${l}%)`;
+    }
+    function applyRandomColors(){
+      lights.forEach((el) => {
+        const c = randomNeonColor();
+        el.style.background = c;
+        el.style.boxShadow = `0 0 10px ${c}, 0 0 18px ${c}`;
+        el.style.animationDuration = (1.0 + Math.random() * 1.2).toFixed(2) + 's';
+        el.style.animationDelay = (Math.random() * 0.8).toFixed(2) + 's';
+      });
+    }
+    applyRandomColors();
+    setInterval(applyRandomColors, 900);
+
+    // ---------------------------
+    // Snowfall (canvas)
+    // ---------------------------
+    const canvas = document.getElementById('snow');
+    const ctx = canvas.getContext('2d');
+
+    let W=0, H=0, flakes=[];
+    const FLAKE_COUNT = 110;
+
+    function resize(){
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      W = Math.floor(window.innerWidth);
+      H = Math.floor(window.innerHeight);
+      canvas.width  = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function makeFlake(){
+      return {
+        x: rand(0, W),
+        y: rand(-H, 0),
+        r: rand(1.0, 3.2),
+        vy: rand(0.75, 2.1),
+        vx: rand(-0.40, 0.40),
+        drift: rand(0, Math.PI*2),
+        alpha: rand(0.28, 0.88)
+      };
+    }
+
+    function initSnow(){
+      flakes = [];
+      for (let i=0;i<FLAKE_COUNT;i++) flakes.push(makeFlake());
+    }
+
+    function step(){
+      ctx.clearRect(0,0,W,H);
+
+      for (const f of flakes){
+        f.drift += 0.01;
+        f.x += f.vx + Math.sin(f.drift) * 0.22;
+        f.y += f.vy;
+
+        if (f.y > H + 10){
+          f.y = rand(-80, -10);
+          f.x = rand(0, W);
+        }
+        if (f.x < -10) f.x = W + 10;
+        if (f.x > W + 10) f.x = -10;
+
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    window.addEventListener('resize', () => { resize(); initSnow(); }, {passive:true});
+    resize();
+    initSnow();
+    step();
+  </script>
+</body>
+</html>
